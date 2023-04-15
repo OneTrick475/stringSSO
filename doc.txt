@@ -1,0 +1,9 @@
+An object of type MyString takes 24bytes of memory, the first 16 of which are taken by the union and the other 8 by (size_t)capacity.
+Strings with 15 or less characters will be stored in the (char[16])smallString in the union. The last character is saved for a '\0'.
+When the string exceeds 15character, the first 8bytes of the union are used for a (char*)_data and the other 8 for a (size_t)_length.
+(int*)container is only for easier access to the (size_t)(8bytes) starting at byte 9.
+
+(size_t)capacity is not a part of the union because we need it to optimize the small string operations.
+
+Since we have capacity, length isnt necesarry in this implementation but it would come into use if for example instead of always keeping a string with the exact length,
+we resized by x2 every time the string is full(in this case capacity and length would differ). 
