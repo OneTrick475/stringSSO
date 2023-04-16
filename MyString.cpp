@@ -143,10 +143,10 @@ MyString MyString::substr(size_t begin, size_t howMany) const {
 
 	MyString res(howMany + 1);
 
+	res._capacity = res._length = howMany;
+	
 	for (int i = 0; i < howMany; i++)
 		res[i] = (*this)[begin + i];
-	
-	res._capacity = res._length = howMany;
 
 	res[howMany] = '\0';
 	return res;
