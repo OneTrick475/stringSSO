@@ -69,8 +69,10 @@ MyString::MyString() {
 }
 
 MyString::MyString(const char* data) : MyString(strlen(data) + 1) {
-	if (data == nullptr)
+	if (data == nullptr){
+		free();
 		throw std::invalid_argument("Nullptr passed instead of a string");
+	}
 
 	_capacity = strlen(data);
 
