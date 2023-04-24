@@ -6,15 +6,14 @@ class MyString {
 		char _smallString[16];
 		size_t _container[2]; //only for easier access to the size_t that start at byte 9
 		char* _data = nullptr;
-	};							  
-	#define _length _container[1] // bits from 9 to 16 in the union will be used for the length. Since we have capacity, length isnt necesarry in this implementation
-								  // it would come into use if for example instead of always keeping a string with the exact length, we resized by x2 every time the string is full
+	};
+	// bits from 9 to 16 in the union will be used for the length. ( container[1] )
 	size_t _capacity = 0;
 
 	void copyFrom(const MyString& data);
 	void free();
 
-	explicit MyString(size_t capacity); 
+	explicit MyString(size_t capacity);
 
 	bool isSmall() const;
 public:

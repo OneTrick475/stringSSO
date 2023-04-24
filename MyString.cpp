@@ -1,6 +1,10 @@
 #include "MyString.h"
 #pragma warning(disable : 4996)
 
+//define used here and not in the .h to keep it only visible in this file and not anywhere .h is included
+#define _length _container[1] // bits from 9 to 16 in the union will be used for the length. Since we have capacity, length isnt necesarry in this implementation
+// it would come into use if for example instead of always keeping a string with the exact length, we resized by x2 every time the string is full
+
 MyString::MyString(size_t capacity) {
 	_capacity = capacity - 1;
 
@@ -69,7 +73,7 @@ MyString::MyString() {
 }
 
 MyString::MyString(const char* data) : MyString(strlen(data) + 1) {
-	if (data == nullptr){
+	if (data == nullptr) {
 		free();
 		throw std::invalid_argument("Nullptr passed instead of a string");
 	}
@@ -119,6 +123,7 @@ void MyString::copyFrom(const MyString& other) {
 		return;
 	}
 
+	_capacity = other._capacity;
 	_length = other._length;
 	_data = new char[_length + 1];
 	strcpy(_data, other._data);
@@ -146,7 +151,7 @@ MyString MyString::substr(size_t begin, size_t howMany) const {
 	MyString res(howMany + 1);
 
 	res._capacity = res._length = howMany;
-	
+
 	for (int i = 0; i < howMany; i++)
 		res[i] = (*this)[begin + i];
 
@@ -155,9 +160,8 @@ MyString MyString::substr(size_t begin, size_t howMany) const {
 }
 
 const char* MyString::c_str() const {
-	if (isSmall()) {
+	if (isSmall()) 
 		return _smallString;
-	}
 
 	return _data;
 }
