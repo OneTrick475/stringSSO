@@ -10,7 +10,8 @@ class MyString {
 	// bits from 9 to 16 in the union will be used for the length. ( container[1] )
 	size_t _capacity = 0;
 
-	void copyFrom(const MyString& data);
+	void copyFrom(const MyString& other);
+	void moveFrom(MyString& other);
 	void free();
 
 	explicit MyString(size_t capacity);
@@ -20,7 +21,9 @@ public:
 	MyString();
 	MyString(const char* data);
 	MyString(const MyString& other);
+	MyString(MyString&& other);
 	MyString& operator=(const MyString& other);
+	MyString& operator=(MyString&& other);
 	~MyString();
 
 	MyString& operator+=(const MyString& other);

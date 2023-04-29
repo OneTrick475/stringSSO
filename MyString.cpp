@@ -14,7 +14,13 @@ MyString::MyString(size_t capacity) {
 	}
 
 	_length = capacity - 1;
-	_data = new char[capacity];
+
+	try {
+		_data = new char[capacity];
+	}catch(const std::bad_alloc&) {
+		std::cout << "there was a problem while allocating memory\n";
+		throw;
+	}
 }
 
 bool MyString::isSmall() const {
@@ -49,7 +55,13 @@ MyString& MyString::operator+=(const MyString& other) {
 			strcpy(temp, _smallString);
 
 			_capacity += other._capacity;
-			_data = new char[_capacity + 1];
+			try {
+				_data = new char[_capacity + 1];
+			}
+			catch (const std::bad_alloc&) {
+				std::cout << "there was a problem while allocating memory\n";
+				throw;
+			}
 			_data[0] = '\0';
 			strcat(_data, temp);
 			strcat(_data, other.c_str());
@@ -57,13 +69,18 @@ MyString& MyString::operator+=(const MyString& other) {
 		return *this;
 	}
 
-	char* result = new char[(_length += other._length) + 1];
-	result[0] = '\0';
-	strcat(result, _data);
-	strcat(result, other._data);
+	try {
+		char* result = new char[(_length += other._length) + 1];
+		result[0] = '\0';
+		strcat(result, _data);
+		strcat(result, other._data);
 
-	delete[] _data;
-	_data = result;
+		delete[] _data;
+		_data = result;
+	}catch(const std::bad_alloc&) {
+		std::cout << "there was a problem while allocating memory\n";
+		throw;
+	}
 
 	return *this;
 }
@@ -92,6 +109,20 @@ MyString::MyString(const MyString& other) {
 	copyFrom(other);
 }
 
+MyString::MyString(MyString&& other) {
+	moveFrom(other);
+}
+
+
+MyString& MyString::operator=(MyString&& other) {
+	if (this != &other) {
+		free();
+		moveFrom(other);
+	}
+	return *this;
+}
+
+
 MyString& MyString::operator=(const MyString& other) {
 	if (this != &other) {
 		free();
@@ -116,6 +147,20 @@ size_t MyString::length() const {
 	return _capacity;
 }
 
+void MyString::moveFrom(MyString& other) {
+	if(other.isSmall()) {
+		strcpy(_smallString, other._smallString);
+		_capacity = other._capacity;
+		return;
+	}
+
+	_capacity = other._capacity;
+	_length = other._length;
+	_data = other._data;
+	other._data = nullptr;
+}
+
+
 void MyString::copyFrom(const MyString& other) {
 	if (other.isSmall()) {
 		strcpy(_smallString, other._smallString);
@@ -125,8 +170,13 @@ void MyString::copyFrom(const MyString& other) {
 
 	_capacity = other._capacity;
 	_length = other._length;
-	_data = new char[_length + 1];
-	strcpy(_data, other._data);
+	try {
+		_data = new char[_length + 1];
+		strcpy(_data, other._data);
+	}catch (const std::bad_alloc&) {
+		std::cout << "there was a problem while allocating memory\n";
+		throw;
+	}
 }
 
 //std::string doesnt make any validations for []
@@ -188,3 +238,4 @@ std::istream& operator>>(std::istream& is, MyString& str) {
 	strcpy(str._data, buff);
 	return is;
 }
+
